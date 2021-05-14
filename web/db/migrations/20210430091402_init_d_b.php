@@ -52,7 +52,7 @@ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 article_tag_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 article_id INT UNSIGNED NOT NULL,
 tag_id INT UNSIGNED NOT NULL,
-FOREIGN KEY (article_id) REFERENCES Articles(article_id),
+FOREIGN KEY (article_id) REFERENCES Articles(article_id) ,
 FOREIGN KEY (tag_id) REFERENCES Tags(tag_id)
 );';
         $tables = [

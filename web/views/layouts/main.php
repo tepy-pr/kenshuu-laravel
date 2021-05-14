@@ -9,48 +9,56 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
+  <style>
+    a {
+      text-decoration: none;
+    }
+
+    ul {
+      list-style: none;
+    }
+  </style>
+
   <title>Hello, world!</title>
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user">User</a>
-          </li>
-          <?php
-
-          use core\Application;
-
-          ?>
-          <?php if (Application::$app->user) : ?>
-            <li class="nav-item">
-              <a class="nav-link" href="/user/logout">Log Out</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/post/new">Create Post</a>
-            </li>
-          <?php else : ?>
-            <li class="nav-item">
-              <a class="nav-link" href="/user/signup">Sign Up</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/user/login">Log In</a>
-            </li>
-          <?php endif; ?>
-        </ul>
+  <div class="container py-3">
+    <nav class="row flex-nowrap justify-content-between align-items-center">
+      <div class="col-4">
+        <a href="/">Home</a>
       </div>
-    </div>
-  </nav>
+      <div class="navbar-brand col-4 text-center">
+        <a class="text-dark" href="/">
+          KIJI
+        </a>
+      </div>
+      <ul class="col-4 d-flex justify-content-end align-items-center">
+        <?php
+
+        use core\Application;
+        ?>
+        <?php if (Application::$app->user) : ?>
+          <li class="nav-item btn btn-sm btn-outline-primary">
+            <a class="nav-link" href="/post/new">Create Post</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user/logout">Log Out</a>
+          </li>
+        <?php else : ?>
+          <li class="nav-item">
+            <a class="nav-link btn btn-sm btn-outline-primary" href="/user/signup">Sign Up</a>
+          </li>
+          <li class="nav-item ms-4">
+            <a class="nav-link btn btn-sm btn-outline-secondary" href="/user/login">Log In</a>
+          </li>
+        <?php endif; ?>
+      </ul>
+    </nav>
+  </div>
   <div class="container">
 
     {{content}}

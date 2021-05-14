@@ -29,6 +29,14 @@ class Router
     $path = $this->request->getPath();
     $method = strtolower($this->request->getMethod());
     $callback = $this->routes[$method][$path] ?? false;
+    // $ori_routes = array_keys($this->routes[$method]);
+    // $params = [];
+    // foreach ($ori_routes as $route_name => $route) {
+    //   $param_list = $this->request->getParams($route);
+    //   $params[$route] = $callback;
+    // }
+
+    // var_dump($params);
 
     if ($callback === false) {
       Application::$app->response->setStatusCode(404);

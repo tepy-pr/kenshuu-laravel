@@ -7,7 +7,7 @@ class Request
 
   public function getPath()
   {
-    $path = $_SERVER["REQUEST_URI"] ?? "/";
+    $path = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL) ?? "/";
     $position = strpos($path, "?");
     if ($position === false) {
       return $path;
@@ -31,6 +31,11 @@ class Request
     return $this->getMethod() === "post";
   }
 
+  public function isPatch()
+  {
+    return $this->getMethod() === "patch";
+  }
+
   public function getBody()
   {
     $body = [];
@@ -46,6 +51,23 @@ class Request
       }
     }
 
+    // if ($this->isPatch()) {
+    //   foreach ($_P as $key => $value) {
+    //     $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+    //   }
+    // }
     return $body;
+  }
+
+  public function getParams($param)
+  {
+    $queries = explode("&", trim($_SERVER["QUERY_STRING"]));
+    $queryPairs = [];
+    foreach ($queries as $query) {
+      $pair = explode("=", $query);
+      $queryPairs[$pair[0]] = $pair[1];
+    }
+
+    return $queryPairs[$param];
   }
 }

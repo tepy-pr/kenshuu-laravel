@@ -7,7 +7,7 @@ require_once(__DIR__ . "/Request.php");
 require_once(__DIR__ . "/Response.php");
 require_once(__DIR__ . "/Database.php");
 require_once(__DIR__ . "/Session.php");
-require_once(__DIR__ . "/../models/User.php");
+require_once(__DIR__ . "/../models/Entities/User.php");
 
 use core\Router;
 use core\Request;
