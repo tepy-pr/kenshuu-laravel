@@ -2,3 +2,4 @@ logs/
 web/vendor/
 web/image/
 *.env
+data/
