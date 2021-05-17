@@ -23,6 +23,7 @@ use model\Service\UserService;
 use model\Service\TagService;
 use PDO;
 use PDOException;
+use RuntimeException;
 
 class PostController extends Controller
 {
@@ -42,41 +43,47 @@ class PostController extends Controller
 
   public function new(Request $request)
   {
-    if ($request->isPost()) {
-      $currentUser = $this->userService->getCurrentUser();
-
-      $images = $this->imageService->loadUserSelectedImages("postImage", "uploadImage", "image");
-
-      if ($currentUser) {
-        try {
-
-          $body = $request->getBody();
-          $post = new Post();
-          $post->loadData($body);
-          $post->user_id = intval($currentUser->user_id);
-          $post->thumbnail = $images[0]->url;
-
-          $rawTags = explode(",", trim($body["tags"]));
-          $cleanTagStrings = $this->tagService->getCleanTagStrings($rawTags);
-
-          Application::$app->db->pdo->beginTransaction();
-
-          $postId = $this->postService->savePost($post);
-          $this->imageService->uploadImages($images, $postId);
-          $this->tagService->saveTags($cleanTagStrings);
-          $insertedTags = $this->tagService->getInsertedTags($cleanTagStrings);
-          $this->tagService->savePostTags($insertedTags, $postId);
-
-          Application::$app->db->pdo->commit();
-          Application::$app->response->setStatusCode(200);
-          Application::$app->response->redirect("/post", 0);
-        } catch (PDOException $e) {
-          Application::$app->db->pdo->rollBack();
-          return $this->render("/post/new", ["error" => "Failed to create a new post!" . $e]);
-        }
-      }
+    if (!$request->isPost()) {
+      return $this->render("/post/new");
     }
-    return $this->render("/post/new");
+    $currentUser = $this->userService->getCurrentUser();
+
+    if (!$currentUser) {
+      return $this->render("/post/new", ["error" => "You need to log in first."]);
+    }
+
+    $images = [];
+    try {
+      $images  = $this->imageService->loadUserSelectedImages("postImage", "uploadImage", "image");
+    } catch (RuntimeException $e) {
+      return $this->render("/post/new", ["error" => "Failed to Upload Image!" . $e]);
+    }
+    try {
+
+      $body = $request->getBody();
+      $post = new Post();
+      $post->loadData($body);
+      $post->user_id = intval($currentUser->user_id);
+      $post->thumbnail = $images[0]->url;
+
+      $rawTags = explode(",", trim($body["tags"]));
+      $cleanTagStrings = $this->tagService->getCleanTagStrings($rawTags);
+
+      Application::$app->db->pdo->beginTransaction();
+
+      $postId = $this->postService->savePost($post);
+      $this->imageService->uploadImages($images, $postId);
+      $this->tagService->saveTags($cleanTagStrings);
+      $insertedTags = $this->tagService->getInsertedTags($cleanTagStrings);
+      $this->tagService->savePostTags($insertedTags, $postId);
+
+      Application::$app->db->pdo->commit();
+      Application::$app->response->setStatusCode(200);
+      Application::$app->response->redirect("/post", 0);
+    } catch (PDOException $e) {
+      Application::$app->db->pdo->rollBack();
+      return $this->render("/post/new", ["error" => "Failed to create a new post!" . $e]);
+    }
   }
 
   public function allPost()

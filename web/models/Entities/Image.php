@@ -14,6 +14,7 @@ class Image extends Model
   public $article_id;
   public $filename;
   public $tempname;
+  public $sha1_name;
 
   public function __construct($article_id = NULL, $filename, $tempname, $tempFolder)
   {
@@ -26,10 +27,11 @@ class Image extends Model
     }
     $this->filename = $filename;
     $this->tempname = $tempname;
+    $this->sha1_name = sha1_file($this->tempname);
     if (!$this->filename) {
       $this->url = "/assets/imgs/default.png";
     } else {
-      $this->url = "/" . $tempFolder . "/" . $this->filename;
+      $this->url = "/" . $tempFolder . "/" . $this->sha1_name;
     }
   }
 
