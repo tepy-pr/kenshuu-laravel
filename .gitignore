@@ -3,3 +3,5 @@ web/vendor/
 web/image/
 *.env
 data/
+.vscode/
+.DS_Store

@@ -1,7 +1,0 @@
-{
-    "require": {
-        "vlucas/phpdotenv": "^5.3",
-        "robmorgan/phinx": "^0.12.6",
-        "ext-exif": "*"
-    }
-}
