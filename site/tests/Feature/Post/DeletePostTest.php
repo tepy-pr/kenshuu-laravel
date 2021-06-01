@@ -12,12 +12,27 @@ class DeletePostTest extends TestCase
 
     use RefreshDatabase;
 
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->user->delete();
+
+        parent::tearDown();
+    }
+
     public function test_post_owner_can_delete_post()
     {
-        $user = factory(User::class)->create();
-        $post = factory(Post::class)->create(["user_id" => $user]);
+        $post = factory(Post::class)->create(["user_id" => $this->user]);
 
-        $response = $this->actingAs($user)->delete('/posts/' . $post->post_id);
+        $response = $this->actingAs($this->user)->delete('/posts/' . $post->post_id);
 
         $deletedPost = Post::find($post->post_id);
 
@@ -28,10 +43,9 @@ class DeletePostTest extends TestCase
     public function test_not_owner_cannot_delete_post()
     {
 
-        $user = factory(User::class)->create();
         $post = factory(Post::class)->create();
 
-        $response = $this->actingAs($user)->delete('/posts/' . $post->post_id);
+        $response = $this->actingAs($this->user)->delete('/posts/' . $post->post_id);
 
         $response->assertRedirect("/");
 

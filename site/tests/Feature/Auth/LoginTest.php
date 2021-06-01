@@ -2,16 +2,29 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Http\Controllers\Auth\LoginController;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Mockery;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->user->delete();
+
+        parent::tearDown();
+    }
 
     public function test_user_can_see_login_form()
     {
@@ -24,9 +37,8 @@ class LoginTest extends TestCase
     public function test_valid_user_can_login()
     {
 
-        $user = factory(User::class)->create();
         $data = [
-            "email" => $user->email,
+            "email" => $this->user->email,
             "password" => "password"
         ];
 
@@ -34,14 +46,13 @@ class LoginTest extends TestCase
 
         $response->assertStatus(302);
         $response->assertRedirect("/");
-        $this->assertAuthenticatedas($user);
+        $this->assertAuthenticatedas($this->user);
     }
 
     public function test_invalid_user_cannot_login()
     {
-        $user = factory(User::class)->create();
         $data = [
-            "email" => $user->email,
+            "email" => $this->user->email,
             "password" => "invalid"
         ];
 
@@ -53,9 +64,8 @@ class LoginTest extends TestCase
 
     public function test_user_can_logout()
     {
-        $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->get('/logout');
+        $response = $this->actingAs($this->user)->get('/logout');
 
         $response->assertStatus(302);
         $response->assertRedirect("/");

@@ -10,6 +10,21 @@ class RegisterTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->make();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
+
     public function test_user_can_see_register_form()
     {
         $response = $this->get('/register');
@@ -20,10 +35,9 @@ class RegisterTest extends TestCase
 
     public function test_valid_user_can_register()
     {
-        $user = factory(User::class)->make();
         $data = [
-            "username" => $user->username,
-            "email" => $user->email,
+            "username" => $this->user->username,
+            "email" => $this->user->email,
             "password" => "test"
         ];
 
@@ -35,10 +49,9 @@ class RegisterTest extends TestCase
 
     public function test_invalid_user_cannot_register()
     {
-        $user = factory(User::class)->make();
         $data = [
-            "username" => $user->username,
-            "email" => $user->email,
+            "username" => $this->user->username,
+            "email" => $this->user->email,
             "password" => "t"
         ];
 

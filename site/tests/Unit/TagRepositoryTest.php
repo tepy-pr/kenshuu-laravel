@@ -14,12 +14,25 @@ class TagRepositoryTest extends TestCase
 
     use RefreshDatabase;
 
+    protected $tagRepo;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tagRepo = new TagRepository(new Tag());
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
     public function test_generate_correct_model()
     {
         $tags = "a, b , c ";
 
-        $tagRepo = new TagRepository(new Tag());
-        $tagModels = $tagRepo->generateTagModels($tags);
+        $tagModels = $this->tagRepo->generateTagModels($tags);
 
         $this->assertCount(3, $tagModels);
         $this->assertInstanceOf(Tag::class, $tagModels[0]);
@@ -39,9 +52,8 @@ class TagRepositoryTest extends TestCase
         $post1 = factory(Post::class)->create(["title" => $post1Title, "user_id" => $user]);
         $post2 = factory(Post::class)->create(["title" => $post2Title, "user_id" => $user]);
 
-        $tagRepo = new TagRepository(new Tag());
-        $tagsForPost1 = $tagRepo->generateTagModels("tag1, tag2");
-        $tagsForPost2 = $tagRepo->generateTagModels("tag2, tag3");
+        $tagsForPost1 = $this->tagRepo->generateTagModels("tag1, tag2");
+        $tagsForPost2 = $this->tagRepo->generateTagModels("tag2, tag3");
 
         $post1->tags()->saveMany($tagsForPost1);
         $post2->tags()->saveMany($tagsForPost2);
@@ -49,8 +61,8 @@ class TagRepositoryTest extends TestCase
         $tag1 = $tagsForPost1[0];
         $tag2 = $tagsForPost1[1];
 
-        $tag1RelatedPosts = $tagRepo->fetchRelatedPosts($tag1);
-        $tag2RelatedPosts = $tagRepo->fetchRelatedPosts($tag2);
+        $tag1RelatedPosts = $this->tagRepo->fetchRelatedPosts($tag1);
+        $tag2RelatedPosts = $this->tagRepo->fetchRelatedPosts($tag2);
 
         $this->assertEquals(1, count($tag1RelatedPosts));
         $this->assertEquals($post1Title, $tag1RelatedPosts[0]->title);

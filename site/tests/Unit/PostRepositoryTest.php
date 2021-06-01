@@ -16,6 +16,26 @@ class PostRepositoryTest extends TestCase
 
     use RefreshDatabase;
 
+    protected $user;
+    protected $imageRepo;
+    protected $postRepo;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+        $this->postRepo = new PostRepository(new Post());
+        $this->imageRepo = new ImageRepository(new Image());
+    }
+
+    protected function tearDown(): void
+    {
+        $this->user->delete();
+
+        parent::tearDown();
+    }
+
     public function test_it_can_create_correct_post()
     {
         $validatedPost = [
@@ -26,14 +46,9 @@ class PostRepositoryTest extends TestCase
         $files = ImageUtil::createImageFiles($inputName, true);
         $folder = "/images";
 
-        $imageRepo = new ImageRepository(new Image());
-        $imageModels = $imageRepo->createImageModelsFromFiles($files, $folder, $inputName);
-
-        $user = factory(User::class)->create();
-        $user_id = $user->user_id;
-
-        $postRepo = new PostRepository(new Post());
-        $newPost = $postRepo->create($validatedPost, $imageModels, $user_id, $folder);
+        $imageModels = $this->imageRepo->createImageModelsFromFiles($files, $folder, $inputName);
+        $user_id = $this->user->user_id;
+        $newPost = $this->postRepo->create($validatedPost, $imageModels, $user_id, $folder);
 
         $this->assertInstanceOf(Post::class, $newPost);
         $this->assertEquals($user_id, $newPost->user_id);
@@ -50,14 +65,12 @@ class PostRepositoryTest extends TestCase
         ];
         $imageFolder = "/images";
         $images = [];
-        $user = factory(User::class)->create();
-        $user_id = $user->user_id;
 
         $postRepo = new PostRepository(new Post());
-        $newPost = $postRepo->create($validatedPost, $images, $user_id, $imageFolder);
+        $newPost = $postRepo->create($validatedPost, $images, $this->user->user_id, $imageFolder);
 
         $this->assertInstanceOf(Post::class, $newPost);
-        $this->assertEquals($user_id, $newPost->user_id);
+        $this->assertEquals($this->user->user_id, $newPost->user_id);
         $this->assertEquals($validatedPost["title"], $newPost->title);
         $this->assertEquals($validatedPost["body"], $newPost->body);
         $this->assertEquals($imageFolder . "/default.png", $newPost->thumbnail);

@@ -15,23 +15,14 @@ class ImageRepository implements IImageRepository
         $this->image = $image;
     }
 
-    public function validate($files, $inputName): array
-    {
-        $validatedImages = Validator::make($files, [
-            $inputName . ".*" => "image"
-        ])->validate();
-
-        return $validatedImages;
-    }
-
     public function createImageModelsFromFiles($files, $folder, $inputName): array
     {
         $imageModels = [];
         $images = [];
-        $validatedImages = $this->validate($files, $inputName);
+        $validatedImages = $files[$inputName];
 
         if (count($validatedImages) > 0) {
-            foreach ($validatedImages[$inputName] as $imageFile) {
+            foreach ($validatedImages as $imageFile) {
                 $ext = $imageFile->extension();
                 $path = $imageFile->getPathName();
                 $imageName = sha1_file($path) . "." . $ext;

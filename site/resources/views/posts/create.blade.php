@@ -14,7 +14,7 @@
                 <div class="alert alert-danger">{{ $message }}</div>
             @enderror
             <div>
-                <input type="file" name="postImages[]" multiple />
+                <input type="file" name="postImages[][image]" multiple />
             </div>
             <label for="tags" class="form-label">Tags (Please use "," to separate tags)</label>
             <input type="text" name="tags" class="form-control" id="tags" placeholder="Tags Here...">
