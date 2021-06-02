@@ -17,6 +17,7 @@ class CreatePostTest extends TestCase
     protected $post;
     protected $validData;
     protected $invalidData;
+    protected $imageRepo;
 
     protected function setUp(): void
     {
@@ -27,7 +28,6 @@ class CreatePostTest extends TestCase
         $this->validData = $this->generatePostData();
         $this->invalidData = $this->generatePostData(false);
     }
-
     protected function tearDown(): void
     {
         $this->user->delete();
@@ -56,9 +56,8 @@ class CreatePostTest extends TestCase
 
     public function test_auth_user_can_save_post()
     {
-        Storage::fake("images");
-
         $route = "/posts";
+
 
         $response = $this->actingAs($this->user)->post($route, $this->validData);
 
@@ -67,8 +66,6 @@ class CreatePostTest extends TestCase
 
     public function test_unauth_user_cannot_save_post()
     {
-        Storage::fake("images");
-
         $route = "/posts";
 
         $response = $this->post($route, $this->validData);
@@ -79,7 +76,6 @@ class CreatePostTest extends TestCase
 
     public function test_auth_user_cannot_save_invalid_post()
     {
-        Storage::fake("images");
 
         $route = "/posts";
 
@@ -91,9 +87,11 @@ class CreatePostTest extends TestCase
 
     private function generatePostData(bool $valid = true)
     {
+        Storage::fake("images");
+
         $image1 = UploadedFile::fake()->image("test1.png");
         $image2 = UploadedFile::fake()->image("test2.png");
-        $images = [$image1, $image2];
+        $images = [["image" => $image1], ["image" => $image2]];
 
         $data = [
             "title" => $valid ? $this->post->title : "",

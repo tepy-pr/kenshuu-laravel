@@ -19,12 +19,10 @@ class ViewPostDetailTest extends TestCase
         $user = factory(User::class)->create();
         $post = factory(Post::class)->create(["thumbnail" => "/images/test.png"]);
 
-        $inputName = "postImages";
-        $files = ImageUtil::createImageFiles($inputName, true);
-        $folder = "/images";
+        $imageFiles = ImageUtil::createImageFiles();
 
         $imageRepo = new ImageRepository(new Image());
-        $imageModels = $imageRepo->createImageModelsFromFiles($files, $folder, $inputName);
+        $imageModels = $imageRepo->createImageModelsFromFiles($imageFiles);
 
         $post->images()->saveMany($imageModels);
 

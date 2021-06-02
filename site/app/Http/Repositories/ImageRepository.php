@@ -15,19 +15,22 @@ class ImageRepository implements IImageRepository
         $this->image = $image;
     }
 
-    public function createImageModelsFromFiles($files, $folder, $inputName): array
+    public function createImageModelsFromFiles($imageFiles): array
     {
+        if (!$imageFiles) {
+            return [];
+        }
+
         $imageModels = [];
         $images = [];
-        $validatedImages = $files[$inputName];
 
-        if (count($validatedImages) > 0) {
-            foreach ($validatedImages as $imageFile) {
-                $ext = $imageFile->extension();
-                $path = $imageFile->getPathName();
+        if (count($imageFiles) > 0) {
+            foreach ($imageFiles as $imageFile) {
+                $ext = $imageFile["image"]->extension();
+                $path = $imageFile["image"]->getPathName();
                 $imageName = sha1_file($path) . "." . $ext;
-                $imageFile->move(public_path($folder), $imageName);
-                array_push($images, $folder . "/" . $imageName);
+                $imageFile["image"]->move(public_path("/images"), $imageName);
+                array_push($images, "/images/" . $imageName);
             }
         }
 

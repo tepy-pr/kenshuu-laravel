@@ -6,5 +6,5 @@ use App\Post;
 
 interface IPostRepository
 {
-    public function create($validatedPost, $imageModels, $user_id, $imageFolder): Post;
+    public function create($validatedPost, $user_id): Post;
 }

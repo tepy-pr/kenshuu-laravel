@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 class ImageUtil
 {
 
-    public static function createImageFiles($inputName, $isValid)
+    public static function createImageFiles($isValid = true)
     {
         Storage::fake("images");
         $ext = $isValid ? "png" : "pdf";
@@ -16,12 +16,9 @@ class ImageUtil
         $image1 = UploadedFile::fake()->image("test1." . $ext);
         $image2 = UploadedFile::fake()->image("test2.png");
 
-        $images = [$image1, $image2];
-        $files = [
-            $inputName => $images
-        ];
+        $images = [["image" => $image1], ["image" => $image2]];
 
-        return $files;
+        return $images;
     }
 
     public static function createFakeImage($name = "test.png")

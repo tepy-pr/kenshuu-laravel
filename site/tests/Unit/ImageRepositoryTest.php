@@ -28,14 +28,19 @@ class ImageRepositoryTest extends TestCase
 
     public function test_generate_image_models_from_files()
     {
-        $inputName = "postImages";
-        $files = ImageUtil::createImageFiles($inputName, true);
-        $folder = "/images";
+        $imageFiles = ImageUtil::createImageFiles();
 
-        $imageModels = $this->imageRepo->createImageModelsFromFiles($files, $folder, $inputName);
+        $imageModels = $this->imageRepo->createImageModelsFromFiles($imageFiles);
 
         $this->assertCount(2, $imageModels);
         $this->assertInstanceOf(Image::class, $imageModels[0]);
         $this->assertInstanceOf(Image::class, $imageModels[1]);
+    }
+
+    public function test_it_return_empty_when_no_image_file()
+    {
+        $imageModels = $this->imageRepo->createImageModelsFromFiles(null);
+
+        $this->assertEmpty($imageModels);
     }
 }

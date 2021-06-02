@@ -55,20 +55,11 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        $imageFolder = "/images";
-
         $validatedPost = $request->validated();
-        $files = $request->allFiles();
-
         $user_id = Auth::id();
 
         try {
-            $imageModels = $this->imageRepo->createImageModelsFromFiles($files, $imageFolder, "postImages");
-            $tags = $this->tagRepo->generateTagModels($validatedPost["tags"]);
-            $post = $this->postRepo->create($validatedPost, $imageModels, $user_id, $imageFolder);
-
-            $post->images()->saveMany($imageModels);
-            $post->tags()->saveMany($tags);
+            $this->postRepo->create($validatedPost, $user_id);
         } catch (Exception $e) {
             return response()->view("posts.edit", ["post" => null, "errorMsg" => "Error saving post!"]);
         }
